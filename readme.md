@@ -1,106 +1,99 @@
-Below is an updated README that explains the project as a graphical client for the Mandragore digital resources provided by the Bibliothèque nationale de France:
-
----
-
 # MandragoreGUI
 
-**A Graphical Client for Mandragore Digital Resources**  
-*(A user-friendly interface to browse, zoom, and download high-resolution images hosted by [Mandragore](https://mandragore.bnf.fr/) at the Bibliothèque nationale de France.)* citeturn2fetch0
+**Client graphique pour télécharger des ressources numériques protégées de Mandragore**  
+*(Interface utilisateur indépendante permettant de naviguer, zoomer et télécharger des images en haute résolution depuis le site [Mandragore](https://mandragore.bnf.fr/) de la Bibliothèque nationale de France.)*
 
-## Overview
+## Présentation
 
-MandragoreGUI is a lightweight, static web application built using HTML, CSS, and JavaScript. It serves as a dedicated client for the [Mandragore](https://mandragore.bnf.fr/) digital repository provided by the Bibliothèque nationale de France (BnF). Using this interface, users can enter a book reference (with the default being `12148/btv1b52506706r`), navigate through pages, zoom and pan high-resolution images, and download them with ease. The application leverages the IIIF endpoint available on the Mandragore site to retrieve resources, making it a handy tool for researchers, historians, and digital humanities enthusiasts. citeturn0fetch0
+MandragoreGUI est une application web statique, légère et développée en HTML, CSS et JavaScript. Elle sert d'interface dédiée aux ressources numériques proposées par Mandragore, le portail de la Bibliothèque nationale de France. Ce projet, réalisé de manière indépendante, n'est ni associé ni approuvé par la BnF. MandragoreGUI a pour objectif d'aider les utilisateurs à télécharger des images issues de fichiers protégés, souvent difficiles à sauvegarder directement via l'interface officielle.
 
-## Features
+## Fonctionnalités
 
-- **Book Loading:**  
-  Enter a book reference (e.g., `12148/btv1b52506706r`) to load its associated digital resource from Mandragore.
+- **Chargement d'Ouvrage :**  
+  Saisissez une référence d'ouvrage (par exemple, la valeur par défaut `12148/btv1b52506706r`) pour charger les ressources associées depuis Mandragore.
 
-- **Seamless Navigation:**  
-  Browse through pages with **Précédent** (Previous) and **Suivant** (Next) buttons or jump directly to a desired page using the input field.
+- **Extraction de la Référence de l'Ouvrage :**  
+  Lorsque vous consultez un ouvrage sur le site de Mandragore, par exemple :  
+  `https://mandragore.bnf.fr/mirador/ark:/12148/btv1b84192173/f49`  
+  Vous devez extraire la référence de l'ouvrage, ici **`12148/btv1b84192173`**.  
+  Celle-ci se trouve dans l'URL après `ark:/` et avant le numéro de page (`/f49`). Entrez cette référence dans le champ prévu à cet effet dans l'interface.
 
-- **Dual & Single Page Display:**  
-  Automatically switches between dual-page spreads and single-page mode when viewing the cover or final pages.
+- **Navigation Simplifiée :**  
+  Utilisez les boutons **Précédent** et **Suivant** pour parcourir les pages, ou saisissez directement un numéro de page pour y accéder instantanément.
 
-- **Zoom & Pan:**  
-  Easily adjust the zoom level with intuitive sliders. When zoomed in, click and drag (or use touch gestures) to pan across the image. A reset button is provided to quickly return to the default view.
+- **Affichage en Mode Double et Simple :**  
+  L'interface passe automatiquement en mode double page pour une lecture classique, et en mode simple pour la couverture ou la dernière page.
 
-- **Download Images:**  
-  Download high-resolution page images using the provided download buttons. *(Note: Although files are labeled with a `.highres` extension, they are standard JPEG images. You may rename them after downloading.)*
+- **Zoom et Déplacement :**  
+  Ajustez le niveau de zoom à l'aide des curseurs intuitifs. Cliquez sur une image pour alterner entre le zoom standard et un zoom accru. Lorsqu'une image est zoomée, vous pouvez la déplacer en cliquant-glissant (ou via des gestes tactiles). Un bouton **Réinitialiser** permet de revenir rapidement à la vue par défaut.
 
-- **Theme Toggle:**  
-  Switch between light and dark modes manually; the application also auto-detects your system's color scheme for a tailored viewing experience.
+- **Téléchargement des Images :**  
+  Téléchargez les images en haute résolution grâce aux boutons dédiés. Les fichiers téléchargés possèdent une extension `.highres` bien qu'ils soient au format JPEG (vous pouvez renommer l'extension après téléchargement).
 
-## Live Demo
+- **Thème Clair/Sombre :**  
+  Basculez entre le mode clair et le mode sombre manuellement. L'interface s'adapte également automatiquement aux préférences de votre système.
 
-Experience MandragoreGUI in action on GitHub Pages:  
-[MandragoreGUI Demo](https://bastonus.github.io/MandragoreGUI/) citeturn0fetch0
+## Démo en Ligne et Page GitHub
 
-## Installation
+- **Démo en Ligne :**  
+  Essayez MandragoreGUI directement via GitHub Pages :  
+  [MandragoreGUI Démo](https://bastonus.github.io/MandragoreGUI/)
 
-Since MandragoreGUI is a static site, you can run it locally or host it on any static file server.
+- **Page GitHub :**  
+  Retrouvez le code source et les informations sur le projet sur :  
+  [github.com/bastonus/MandragoreGUI](https://github.com/bastonus/MandragoreGUI)
 
-### Running Locally
+## Utilisation
 
-1. **Clone the Repository:**
+1. **Charger un Ouvrage :**  
+   - Saisissez une référence d'ouvrage valide (par exemple, `12148/btv1b52506706r`) dans le champ dédié.  
+   - Cliquez sur le bouton **Charger** pour récupérer l'ouvrage depuis Mandragore.
 
-   ```bash
-   git clone https://github.com/bastonus/MandragoreGUI.git
-   ```
+2. **Extraction de la Référence :**  
+   - Lors de la consultation d'un ouvrage sur Mandragore (exemple : `https://mandragore.bnf.fr/mirador/ark:/12148/btv1b84192173/f49`), extrayez la référence de l'ouvrage, ici **`12148/btv1b84192173`**.  
+   - Entrez cette référence dans l'interface pour charger les pages correspondantes.
 
-2. **Navigate to the Project Directory:**
+3. **Parcourir les Pages :**  
+   - Utilisez les boutons **Précédent** et **Suivant** pour naviguer d'une page à l'autre.  
+   - Vous pouvez également saisir directement le numéro de page dans le champ prévu.
 
-   ```bash
-   cd MandragoreGUI
-   ```
+4. **Zoomer et Déplacer l'Image :**  
+   - Ajustez le zoom à l'aide du curseur situé sous chaque image.  
+   - Cliquez sur l'image pour activer ou désactiver le zoom.  
+   - En mode zoomé, déplacez l'image en cliquant et glissant (ou en utilisant des gestes tactiles).  
+   - Utilisez le bouton **Réinitialiser** pour revenir à la vue par défaut.
 
-3. **Open the Application:**
+5. **Télécharger une Image :**  
+   - Cliquez sur le bouton **Télécharger l'image** pour sauvegarder l'image en haute résolution.  
+   - Notez que le fichier sera téléchargé avec une extension `.highres`, bien qu'il soit au format JPEG.
 
-   - **Directly:** Open the `index.html` file in your web browser.
-   - **Using a Local Server:** For example, using Python’s built-in server:
-     ```bash
-     python -m http.server
-     ```
-     Then navigate to `http://localhost:8000` in your browser.
+## Avertissements
 
-## Usage
+- **Indépendance du Projet :**  
+  Ce projet est une initiative indépendante et n'est ni associé ni approuvé par la Bibliothèque nationale de France.
 
-1. **Load a Book:**
-   - Enter a valid Mandragore book reference (the default is `12148/btv1b52506706r`) in the input field.
-   - Click the **Charger** button to load the digital resource from [Mandragore](https://mandragore.bnf.fr/).
+- **Utilisation Responsable :**  
+  MandragoreGUI est destiné à faciliter le téléchargement d'images issues de fichiers protégés. Veuillez respecter les droits d'auteur et les conditions d'utilisation des ressources numériques disponibles sur [Mandragore](https://mandragore.bnf.fr/).
 
-2. **Navigate Through Pages:**
-   - Use the **Précédent** and **Suivant** buttons to move between pages.
-   - Alternatively, input a page number directly and press Enter to jump to that page.
+## Contribuer
 
-3. **Zoom and Pan:**
-   - Adjust the zoom level with the slider beneath each page image.
-   - Click on the image to toggle between standard and zoomed views.
-   - When zoomed, drag the image (or use touch gestures) to pan. Use the **Réinitialiser** button to reset the view.
+Les contributions et suggestions sont les bienvenues ! Si vous rencontrez des problèmes ou avez des idées d'amélioration, veuillez ouvrir une issue ou soumettre une pull request sur la [page GitHub du projet](https://github.com/bastonus/MandragoreGUI).
 
-4. **Download Images:**
-   - Click the **Télécharger l'image** button on either the left or right page to download the image.
-   - Remember: Despite the `.highres` file extension, the downloaded file is a JPEG image.
+## Licence
 
-5. **Toggle Theme:**
-   - Use the **Thème sombre** button to switch between light and dark modes. The theme also auto-adjusts based on your system’s settings.
-
-## About Mandragore
-
-Mandragore is the digital repository hosted by the Bibliothèque nationale de France, offering access to high-resolution scans of books and manuscripts. This project provides a dedicated GUI client to interact with Mandragore’s IIIF-based resources, making it easier to download and work with the materials.
-
-## Contributing
-
-Contributions and suggestions are welcome! If you encounter any issues or have ideas for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/bastonus/MandragoreGUI). citeturn2fetch0
-
-## License
-
-This project currently does not include a license. For details regarding reuse or distribution, please contact the repository owner.
+Ce projet n'inclut pas actuellement de licence. Pour toute question concernant l'utilisation ou la distribution du code, veuillez contacter le propriétaire du dépôt.
 
 ## Contact
 
-For questions, feedback, or contributions, please reach out via GitHub issues on the [MandragoreGUI repository](https://github.com/bastonus/MandragoreGUI). citeturn2fetch0
+Pour toute question, retour ou proposition de contribution, veuillez utiliser les issues sur la [page GitHub du projet](https://github.com/bastonus/MandragoreGUI).
+
+## Remerciements
+
+- **Ressources de Mandragore :**  
+  Les images en haute résolution fournies par [Mandragore](https://mandragore.bnf.fr/) (Bibliothèque nationale de France) constituent la source de données de cette application.
+- Merci à la communauté open source pour les outils et l'inspiration ayant permis la réalisation de ce projet.
 
 ---
 
-*Created by [bastonus](https://github.com/bastonus).* 
+*Créé par [bastonus](https://github.com/bastonus).*  
+*(README mis à jour pour expliquer comment extraire la référence d'un ouvrage depuis Mandragore et pour clarifier l'utilisation du projet pour télécharger des images issues de fichiers protégés.)*
