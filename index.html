@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mandragore GUI</title>
+  <!-- Add this in your <head> section -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* Base et réinitialisations */
     body {
@@ -345,6 +347,76 @@
         width: 90%;
       }
     }
+    /* Existing container - keep centered but make full width */
+.container {
+  max-width: 100%;
+  width: 100%;
+  padding: 2%;
+}
+
+/* Make grid responsive */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Responsive buttons */
+.button {
+  width: 100%;
+  height: auto;
+  min-height: 100px;
+  padding: 1rem;
+  margin: 0.5rem;
+  
+  /* Maintain aspect ratio */
+  aspect-ratio: 2 / 1;
+  
+  /* Text handling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2vw; /* Base font size on viewport width */
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+  .button {
+    font-size: 1.5vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .button {
+    font-size: 2vw;
+    margin: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .button {
+    font-size: 4vw;
+    aspect-ratio: 3 / 1;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .description {
+    font-size: 0.9rem;
+    padding: 0 1rem;
+  }
+}
   </style>
 </head>
 <body>
