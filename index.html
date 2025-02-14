@@ -167,6 +167,16 @@
         margin-top: 100px;
         padding: 1rem;
       }
+      /* Error container styling */
+      #errorContainer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.1rem;
+      }
+      /* Spread container */
+      #spreadContainer {
+        display: block;
+      }
       .spread {
         display: flex;
         justify-content: center;
@@ -448,51 +458,57 @@
     </header>
   
     <main>
-      <div class="spread">
-        <div class="page left-page" id="leftPage">
-          <div class="img-container">
-            <div class="loader"></div>
-            <img id="leftImage" src="" alt="Page gauche" loading="lazy" data-translate-x="0" data-translate-y="0" />
+      <!-- Error message container (hidden by default) -->
+      <div id="errorContainer" style="display:none;"></div>
+      
+      <!-- Spread container: this is hidden when the ref is invalid -->
+      <div id="spreadContainer">
+        <div class="spread">
+          <div class="page left-page" id="leftPage">
+            <div class="img-container">
+              <div class="loader"></div>
+              <img id="leftImage" src="" alt="Page gauche" loading="lazy" data-translate-x="0" data-translate-y="0" />
+            </div>
+            <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
+              <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
+              <span class="tooltip-text" style="left: -160px; top: 120%;">
+                Le téléchargement s’ouvrira dans un nouvel onglet.<br/>
+                Le document est un fichier <strong>.highres</strong>, 
+                mais c’est en réalité une image <strong>.jpg</strong>.<br/>
+                Vous pouvez donc renommer l’extension lors du téléchargement.
+              </span>
+            </div>
+            <div class="zoom-container" style="margin-top: 1rem;">
+              <input type="range" class="zoom-slider" id="leftZoomSlider" min="1" max="3" step="0.1" value="1" />
+              <span class="zoom-value" id="leftZoomValue">100%</span>
+              <button class="reset-zoom-btn" id="leftResetZoomBtn">Réinitialiser</button>
+            </div>
           </div>
-          <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
-            <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
-            <span class="tooltip-text" style="left: -160px; top: 120%;">
-              Le téléchargement s’ouvrira dans un nouvel onglet.<br/>
-              Le document est un fichier <strong>.highres</strong>, 
-              mais c’est en réalité une image <strong>.jpg</strong>.<br/>
-              Vous pouvez donc renommer l’extension lors du téléchargement.
-            </span>
+          
+          <div class="page right-page" id="rightPage">
+            <div class="img-container">
+              <div class="loader"></div>
+              <img id="rightImage" src="" alt="Page droite" loading="lazy" data-translate-x="0" data-translate-y="0" />
+            </div>
+            <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
+              <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
+              <span class="tooltip-text" style="left: -160px; top: 120%;">
+                Le téléchargement s’ouvrira dans un nouvel onglet.<br/>
+                Le document est un fichier <strong>.highres</strong>, 
+                mais c’est en réalité une image <strong>.jpg</strong>.<br/>
+                Vous pouvez donc renommer l’extension lors du téléchargement.
+              </span>
+            </div>
+            <div class="zoom-container" style="margin-top: 1rem;">
+              <input type="range" class="zoom-slider" id="rightZoomSlider" min="1" max="3" step="0.1" value="1" />
+              <span class="zoom-value" id="rightZoomValue">100%</span>
+              <button class="reset-zoom-btn" id="rightResetZoomBtn">Réinitialiser</button>
+            </div>
           </div>
-          <div class="zoom-container" style="margin-top: 1rem;">
-            <input type="range" class="zoom-slider" id="leftZoomSlider" min="1" max="3" step="0.1" value="1" />
-            <span class="zoom-value" id="leftZoomValue">100%</span>
-            <button class="reset-zoom-btn" id="leftResetZoomBtn">Réinitialiser</button>
-          </div>
+          
+          <button class="nav-arrow left-arrow">&larr;</button>
+          <button class="nav-arrow right-arrow">&rarr;</button>
         </div>
-        
-        <div class="page right-page" id="rightPage">
-          <div class="img-container">
-            <div class="loader"></div>
-            <img id="rightImage" src="" alt="Page droite" loading="lazy" data-translate-x="0" data-translate-y="0" />
-          </div>
-          <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
-            <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
-            <span class="tooltip-text" style="left: -160px; top: 120%;">
-              Le téléchargement s’ouvrira dans un nouvel onglet.<br/>
-              Le document est un fichier <strong>.highres</strong>, 
-              mais c’est en réalité une image <strong>.jpg</strong>.<br/>
-              Vous pouvez donc renommer l’extension lors du téléchargement.
-            </span>
-          </div>
-          <div class="zoom-container" style="margin-top: 1rem;">
-            <input type="range" class="zoom-slider" id="rightZoomSlider" min="1" max="3" step="0.1" value="1" />
-            <span class="zoom-value" id="rightZoomValue">100%</span>
-            <button class="reset-zoom-btn" id="rightResetZoomBtn">Réinitialiser</button>
-          </div>
-        </div>
-        
-        <button class="nav-arrow left-arrow">&larr;</button>
-        <button class="nav-arrow right-arrow">&rarr;</button>
       </div>
     </main>
 
@@ -574,6 +590,18 @@
         });
       }
 
+      // Function to build the image URL for a given page
+      function getImageUrl(page) {
+        return `${baseUrl}${currentBookId}/f${page}.highres`;
+      }
+
+      // New function: check if the first page is NOT blank
+      async function checkBookRefValidity() {
+        const url = getImageUrl(1);
+        const isWhite = await isImageWhite(url);
+        return !isWhite;
+      }
+
       // Auto-detect maximum non-white page using doubling and binary search
       async function autoDetectMaxPage() {
         let lower = 1;
@@ -600,10 +628,6 @@
         }
         maxPageInput.value = lower;
         totalPages = lower;
-      }
-
-      function getImageUrl(page) {
-        return `${baseUrl}${currentBookId}/f${page}.highres`;
       }
 
       function updateSpread() {
@@ -837,20 +861,42 @@
       });
       window.addEventListener('resize', updateSpread);
 
-      // When loading a new book, update the book id and auto-detect the maximum page.
+      // When loading a new book, update the book id and check its validity.
       loadBookBtn.addEventListener('click', async () => {
         const newBookId = bookInput.value.trim();
         if (newBookId && newBookId !== currentBookId) {
           currentBookId = newBookId;
           currentRightPage = 1;
+          const isValid = await checkBookRefValidity();
+          if (!isValid) {
+            document.getElementById('spreadContainer').style.display = 'none';
+            document.getElementById('errorContainer').innerHTML = 'La référence du livre que vous avez entée est erronée.<br/><br/>Pour consulter un ouvrage depuis Mandragore extrayez simplement la référence de l’ouvrage.<br/><br/>Par exemple : https://mandragore.bnf.fr/mirador/ark:/12148/<strong>btv1b84192173</strong>/f49<br/><br/> Référence : <strong>btv1b84192173</strong>.';
+            document.getElementById('errorContainer').style.display = 'block';
+          } else {
+            document.getElementById('errorContainer').style.display = 'none';
+            document.getElementById('spreadContainer').style.display = 'block';
+            updateSpread();
+            await autoDetectMaxPage();
+            updateSpread();
+          }
+        }
+      });
+
+      // On initial load, check if the current reference is valid.
+      (async function init() {
+        const isValid = await checkBookRefValidity();
+        if (!isValid) {
+          document.getElementById('spreadContainer').style.display = 'none';
+          document.getElementById('errorContainer').innerHTML = 'La référence du livre que vous avez entée est erronée.<br/><br/>Pour consulter un ouvrage depuis Mandragore extrayez simplement la référence de l’ouvrage.<br/><br/>Par exemple : https://mandragore.bnf.fr/mirador/ark:/12148/<strong>btv1b84192173</strong>/f49<br/><br/> Référence : <strong>btv1b84192173</strong>.';
+          document.getElementById('errorContainer').style.display = 'block';
+        } else {
+          document.getElementById('errorContainer').style.display = 'none';
+          document.getElementById('spreadContainer').style.display = 'block';
           updateSpread();
           await autoDetectMaxPage();
           updateSpread();
         }
-      });
-
-      // Initial update on page load.
-      updateSpread();
+      })();
     </script>
   </body>
 </html>
