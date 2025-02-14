@@ -1,424 +1,278 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mandragore GUI</title>
-  <!-- Add this in your <head> section -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Base et réinitialisations */
-    body {
-      background: #fff;
-      color: #000;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      font-size: 16px;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem;
-      border-bottom: 1px solid #ccc;
-      background: #fff;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-    }
-    main {
-      margin-top: 80px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      flex-shrink: 0;
-    }
-    
-    /* Book search */
-    .book-search-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .book-search {
-      width: 100%;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.5rem 0;
-      max-width: 260px;
-      background: #000;
-      border-radius: 25px;
-      padding: 0.5rem 1rem;
-    }
-    .book-search input {
-      flex: 1;
-      padding: 0.5rem;
-      border: 1px solid #333;
-      border-radius: 25px;
-      font-size: 1rem;
-      background: #000;
-      color: #fff;
-      min-width: 180px;
-    }
-    
-    /* Navigation */
-    nav.navigation {
-      display: flex;
-      gap: 1rem;
-      margin: 0 1.25rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      flex: 1;
-      max-width: 600px;
-    }
-    nav .page-info {
-      font-size: 1rem;
-    }
-    nav .page-info input[type="number"] {
-      width: 3.75rem;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid #333;
-      border-radius: 25px;
-      text-align: center;
-      background: #000;
-      color: #fff;
-    }
-    
-    /* Boutons globaux */
-    button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border: 1px solid;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: #000;
-      color: #fff;
-      border-color: #000;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      background: #fff;
-      color: #000;
-    }
-    
-    /* Thème sombre */
-    body.dark {
-      background: #121212;
-      color: #e0e0e0;
-    }
-    body.dark header {
-      background: #1e1e1e;
-      border-bottom: 1px solid #333;
-    }
-    body.dark nav.navigation input[type="number"],
-    body.dark .book-search,
-    body.dark .book-search input {
-      background: #2d2d2d;
-      color: #e0e0e0;
-      border-color: #404040;
-    }
-    body.dark .page {
-      background: #2d2d2d;
-      border: 1px solid #404040;
-    }
-    body.dark button {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-    body.dark button:hover:not(:disabled) {
-      background: #000;
-      color: #fff;
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      body:not(.light) {
-        background: #121212;
-        color: #e0e0e0;
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandragore GUI</title>
+    <style>
+      /* Base and resets */
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f5f5;
+        --text-primary: #1a1a1a;
+        --text-secondary: #666666;
+        --border-color: #e0e0e0;
+        --accent-color: #2563eb;
+        --accent-hover: #1d4ed8;
+        --shadow-color: rgba(0, 0, 0, 0.1);
       }
-      body:not(.light) header {
-        background: #1e1e1e;
-        border-bottom: 1px solid #333;
+  
+      body.dark {
+        --bg-primary: #121212;
+        --bg-secondary: #1e1e1e;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --border-color: #333333;
+        --accent-color: #3b82f6;
+        --accent-hover: #60a5fa;
+        --shadow-color: rgba(0, 0, 0, 0.3);
       }
-      body:not(.light) nav.navigation input[type="number"] {
-        background: #2d2d2d;
-        color: #e0e0e0;
-        border-color: #404040;
+  
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 0;
+        font-size: 16px;
+        line-height: 1.5;
       }
-      body:not(.light) .page {
-        background: #2d2d2d;
-        border: 1px solid #404040;
+  
+      /* Header styling */
+      header {
+        background: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        box-shadow: 0 2px 4px var(--shadow-color);
       }
-      body:not(.light) button {
-        background: #fff;
-        color: #000;
-        border-color: #fff;
+  
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--text-primary);
       }
-      body:not(.light) button:hover:not(:disabled) {
-        background: #000;
-        color: #fff;
-      }
-    }
-    
-    /* Layout du spread */
-    .spread {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1.25rem;
-      flex-wrap: wrap;
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .page {
-      background: #f8f8f8;
-      padding: 0.625rem;
-      border-radius: 0.625rem;
-      width: 45%;
-      position: relative;
-      transition: transform 0.2s ease;
-    }
-    .page.single {
-      width: 45%;
-    }
-    
-    /* Conteneur d'image et animation de chargement */
-    .img-container {
-      position: relative;
-      overflow: hidden;
-    }
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #000;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 50;
-    }
-    body.dark .loader {
-      border: 4px solid #333;
-      border-top: 4px solid #fff;
-    }
-    @keyframes spin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    .img-container img {
-      width: 100%;
-      max-height: calc(100vh - 100px);
-      object-fit: cover;
-      display: block;
-      cursor: zoom-in;
-      transition: transform 0.2s ease;
-    }
-    .img-container img.zoomed {
-      cursor: grab;
-    }
-    
-    .zoom-container {
-      display: none;
-    }
-    
-    .download-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .download-btn:hover {
-      background: #fff;
-      color: #000;
-      border: 1px solid #000;
-    }
-    body.dark .download-btn {
-      background: #404040;
-      color: #fff;
-      border: none;
-    }
-    body.dark .download-btn:hover {
-      background: #333;
-      color: #fff;
-      border: 1px solid #fff;
-    }
-    
-    .download-btn::after {
-      content: "Même si le fichier se termine par .highres,\Ail s'agit d'un fichier jpg.\AVous pouvez changer l'extension lors du téléchargement.";
-      position: absolute;
-      bottom: -80px;
-      right: 0;
-      background: red;
-      color: white;
-      padding: 0.3125rem;
-      border: 1px solid red;
-      border-radius: 0.3125rem;
-      white-space: pre;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      font-size: 0.75rem;
-      z-index: 100;
-    }
-    .download-btn:hover::after {
-      opacity: 1;
-    }
-    
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      z-index: 200;
-      display: none;
-      font-size: 1.5rem;
-      line-height: 40px;
-      text-align: center;
-      padding: 0;
-    }
-    .nav-arrow:hover {
-      background: #fff;
-      color: #000;
-      border: 1px solid #000;
-    }
-    .left-arrow {
-      left: -60px;
-    }
-    .right-arrow {
-      right: -60px;
-    }
-    body.dark .nav-arrow {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-    body.dark .nav-arrow:hover {
-      background: #000;
-      color: #fff;
-      border-color: #fff;
-    }
-    @media (min-width: 1024px) {
-      .nav-arrow {
+  
+      /* Book search styling */
+      .book-search-container {
         display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+  
+      .book-search {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 0.5rem;
+        flex: 1;
+      }
+  
+      .book-search input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-width: 200px;
+      }
+  
+      /* Navigation styling */
+      .navigation {
+        display: flex;
+        gap: 1rem;
         align-items: center;
         justify-content: center;
       }
-    }
-    
-    @media (max-width: 768px) {
-      nav.navigation {
-        flex-direction: column;
+  
+      .page-info {
+        display: flex;
         align-items: center;
         gap: 0.5rem;
+        color: var(--text-secondary);
       }
+  
+      .page-info input[type="number"] {
+        width: 4rem;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        text-align: center;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+  
+      /* Button styling */
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: var(--accent-color);
+        color: white;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+  
+      button:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+  
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+  
+      /* Main content area */
+      main {
+        margin-top: 80px;
+        padding: 1rem;
+      }
+  
       .spread {
-        flex-direction: column;
-        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
       }
+  
       .page {
-        width: 90%;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 1rem;
+        flex: 1;
+        max-width: 45%;
+        box-shadow: 0 2px 4px var(--shadow-color);
       }
-    }
-    /* Existing container - keep centered but make full width */
-.container {
-  max-width: 100%;
-  width: 100%;
-  padding: 2%;
-}
-
-/* Make grid responsive */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-}
-
-/* Responsive buttons */
-.button {
-  width: 100%;
-  height: auto;
-  min-height: 100px;
-  padding: 1rem;
-  margin: 0.5rem;
   
-  /* Maintain aspect ratio */
-  aspect-ratio: 2 / 1;
+      .page.single {
+        max-width: 60%;
+      }
   
-  /* Text handling */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2vw; /* Base font size on viewport width */
-}
-
-/* Media Queries */
-@media (max-width: 1024px) {
-  .button {
-    font-size: 1.5vw;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+      .img-container {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+        background: var(--bg-primary);
+      }
   
-  .button {
-    font-size: 2vw;
-    margin: 0.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+      .img-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+        cursor: zoom-in;
+      }
   
-  .button {
-    font-size: 4vw;
-    aspect-ratio: 3 / 1;
-  }
+      /* Loader styling */
+      .loader {
+        border: 3px solid var(--border-color);
+        border-top: 3px solid var(--accent-color);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
   
-  h1 {
-    font-size: 1.5rem;
-  }
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
   
-  .description {
-    font-size: 0.9rem;
-    padding: 0 1rem;
-  }
-}
-  </style>
-</head>
+      /* Download button styling */
+      .download-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--accent-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        z-index: 10;
+      }
+  
+      /* Responsive design */
+      @media (max-width: 1024px) {
+        header {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          padding: 1rem;
+        }
+  
+        .book-search-container {
+          flex-direction: column;
+          align-items: stretch;
+        }
+  
+        .navigation {
+          flex-wrap: wrap;
+        }
+  
+        .spread {
+          flex-direction: column;
+          align-items: center;
+        }
+  
+        .page {
+          max-width: 90%;
+        }
+  
+        .page.single {
+          max-width: 90%;
+        }
+      }
+  
+      @media (max-width: 640px) {
+        header {
+          position: static;
+        }
+  
+        main {
+          margin-top: 1rem;
+        }
+  
+        .book-search {
+          flex-direction: column;
+        }
+  
+        .book-search input {
+          width: 100%;
+          min-width: auto;
+        }
+  
+        .navigation {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+  
+        .page-info {
+          flex-direction: row;
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
 <body>
   <header>
     <h1>Mandragore GUI</h1>
