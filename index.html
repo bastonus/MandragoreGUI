@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mandragore GUI</title>
     <style>
-      /* Base and resets */
+      /* Universal reset and box-sizing */
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      
+      /* CSS Variables */
       :root {
         --bg-primary: #ffffff;
         --bg-secondary: #f5f5f5;
-        --text-primary: #1a1a1a;
-        --text-secondary: #666666;
+        --text-primary: #000000;
+        --text-secondary: #404040;
         --border-color: #e0e0e0;
-        --accent-color: #2563eb;
-        --accent-hover: #1d4ed8;
+        --button-bg: #000000;
+        --button-text: #ffffff;
         --shadow-color: rgba(0, 0, 0, 0.1);
       }
-  
+      
       body.dark {
         --bg-primary: #121212;
         --bg-secondary: #1e1e1e;
         --text-primary: #ffffff;
         --text-secondary: #a0a0a0;
         --border-color: #333333;
-        --accent-color: #3b82f6;
-        --accent-hover: #60a5fa;
+        --button-bg: #ffffff;
+        --button-text: #000000;
         --shadow-color: rgba(0, 0, 0, 0.3);
       }
-  
+      
+      /* Base Styles */
       body {
         background: var(--bg-primary);
         color: var(--text-primary);
@@ -36,9 +42,10 @@
         padding: 0;
         font-size: 16px;
         line-height: 1.5;
+        transition: background-color 0.3s, color 0.3s;
       }
-  
-      /* Header styling */
+      
+      /* Header styling for larger screens using flexbox */
       header {
         background: var(--bg-primary);
         border-bottom: 1px solid var(--border-color);
@@ -48,49 +55,51 @@
         left: 0;
         right: 0;
         z-index: 1000;
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        gap: 1rem;
+        display: flex;
+        flex-wrap: wrap;
         align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
         box-shadow: 0 2px 4px var(--shadow-color);
+        transition: background-color 0.3s, border-color 0.3s;
       }
-  
+      
       header h1 {
         margin: 0;
         font-size: 1.5rem;
         color: var(--text-primary);
       }
-  
+      
       /* Book search styling */
       .book-search-container {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 0.5rem;
-        max-width: 600px;
-        margin: 0 auto;
       }
-  
+      
       .book-search {
         display: flex;
         gap: 0.5rem;
         align-items: center;
         background: var(--bg-secondary);
-        border-radius: 8px;
-        padding: 0.5rem;
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
         flex: 1;
+        min-width: 250px;
       }
-  
+      
       .book-search input {
         flex: 1;
         padding: 0.5rem;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: 25px;
         font-size: 0.9rem;
         background: var(--bg-primary);
         color: var(--text-primary);
         min-width: 200px;
       }
-  
+      
       /* Navigation styling */
       .navigation {
         display: flex;
@@ -98,51 +107,73 @@
         align-items: center;
         justify-content: center;
       }
-  
+      
       .page-info {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         color: var(--text-secondary);
       }
-  
+      
       .page-info input[type="number"] {
         width: 4rem;
         padding: 0.5rem;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: 25px;
         text-align: center;
         background: var(--bg-primary);
         color: var(--text-primary);
       }
-  
+      
       /* Button styling */
       button {
         padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 6px;
+        border: 1px solid var(--button-bg);
+        border-radius: 25px;
         cursor: pointer;
-        background: var(--accent-color);
-        color: white;
+        background: var(--button-bg);
+        color: var(--button-text);
         font-weight: 500;
-        transition: all 0.2s ease;
+        transition: background 0.3s, color 0.3s;
       }
-  
-      button:hover:not(:disabled) {
-        background: var(--accent-hover);
+      
+      button:hover:not(:disabled),
+      button:focus:not(:disabled) {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        outline: none;
       }
-  
+      
       button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
       }
-  
+      
+      /* Theme toggle button styling */
+      #themeToggleBtn {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.875rem;
+        border: none;
+        background: var(--button-bg);
+        color: var(--button-text);
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+      }
+      
+      #themeToggleBtn:hover,
+      #themeToggleBtn:focus {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        outline: none;
+      }
+      
       /* Main content area */
       main {
-        margin-top: 80px;
+        margin-top: 100px;
         padding: 1rem;
       }
-  
+      
       .spread {
         display: flex;
         justify-content: center;
@@ -150,39 +181,42 @@
         max-width: 1400px;
         margin: 0 auto;
         position: relative;
+        flex-wrap: wrap;
       }
-  
+      
       .page {
         background: var(--bg-secondary);
-        border-radius: 8px;
+        border-radius: 25px;
         padding: 1rem;
         flex: 1;
         max-width: 45%;
         box-shadow: 0 2px 4px var(--shadow-color);
+        position: relative;
       }
-  
+      
       .page.single {
         max-width: 60%;
       }
-  
+      
       .img-container {
         position: relative;
-        border-radius: 4px;
+        border-radius: 20px;
         overflow: hidden;
         background: var(--bg-primary);
       }
-  
+      
       .img-container img {
         width: 100%;
         height: auto;
         display: block;
         cursor: zoom-in;
+        transition: transform 0.3s ease;
       }
-  
+      
       /* Loader styling */
       .loader {
         border: 3px solid var(--border-color);
-        border-top: 3px solid var(--accent-color);
+        border-top: 3px solid var(--button-bg);
         border-radius: 50%;
         width: 30px;
         height: 30px;
@@ -192,463 +226,516 @@
         left: 50%;
         transform: translate(-50%, -50%);
       }
-  
+      
       @keyframes spin {
         0% { transform: translate(-50%, -50%) rotate(0deg); }
         100% { transform: translate(-50%, -50%) rotate(360deg); }
       }
-  
+      
       /* Download button styling */
       .download-btn {
         position: absolute;
         top: 1rem;
         right: 1rem;
-        background: var(--accent-color);
-        color: white;
+        background: var(--button-bg);
+        color: var(--button-text);
         padding: 0.5rem 1rem;
-        border-radius: 6px;
+        border-radius: 25px;
         font-size: 0.9rem;
         z-index: 10;
+        border: none;
+        transition: background 0.3s, color 0.3s;
       }
-  
-      /* Responsive design */
+      
+      .download-btn:hover,
+      .download-btn:focus {
+        background: var(--bg-primary);
+        color: var(--button-bg);
+        outline: none;
+        border: 1px solid var(--button-bg);
+      }
+      
+      /* Navigation arrows */
+      .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        cursor: pointer;
+        border: none;
+        background: var(--button-bg);
+        color: var(--button-text);
+        transition: background 0.3s, color 0.3s;
+      }
+      
+      .nav-arrow:hover,
+      .nav-arrow:focus {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        outline: none;
+      }
+      
+      .left-arrow {
+        left: -60px;
+      }
+      
+      .right-arrow {
+        right: -60px;
+      }
+      
+      /* Responsive design for tablet/desktop */
       @media (max-width: 1024px) {
         header {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-          padding: 1rem;
+          justify-content: center;
         }
-  
-        .book-search-container {
-          flex-direction: column;
-          align-items: stretch;
-        }
-  
+      
         .navigation {
-          flex-wrap: wrap;
+          width: 100%;
+          justify-content: center;
         }
-  
+      
         .spread {
           flex-direction: column;
           align-items: center;
         }
-  
-        .page {
-          max-width: 90%;
-        }
-  
+      
+        .page,
         .page.single {
           max-width: 90%;
         }
       }
-  
+      
+      /* Enhanced responsive layout for mobile */
       @media (max-width: 640px) {
         header {
-          position: static;
-        }
-  
-        main {
-          margin-top: 1rem;
-        }
-  
-        .book-search {
-          flex-direction: column;
-        }
-  
-        .book-search input {
-          width: 100%;
-          min-width: auto;
-        }
-  
-        .navigation {
-          flex-direction: column;
+          display: grid;
+          grid-template-areas:
+            "title toggle"
+            "search search"
+            "nav nav";
+          grid-template-columns: 1fr auto;
           gap: 0.5rem;
+          padding: 0.5rem;
+          position: static;
+          text-align: initial;
         }
-  
-        .page-info {
+        header h1 {
+          grid-area: title;
+          text-align: left;
+          font-size: 1.2rem;
+        }
+        #themeToggleBtn {
+          grid-area: toggle;
+          font-size: 0.8rem;
+        }
+        .book-search-container {
+          grid-area: search;
+          width: 100%;
+          margin: 0;
+        }
+        .book-search {
           flex-direction: row;
           width: 100%;
-          justify-content: center;
+          justify-content: space-between;
+        }
+        .navigation {
+          grid-area: nav;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        }
+        .navigation button,
+        .page-info {
+          flex: 1;
+          text-align: center;
+        }
+        .nav-arrow {
+          display: none;
         }
       }
     </style>
   </head>
-<body>
-  <header>
-    <h1>Mandragore GUI</h1>
-    
-    <div class="book-search-container">
-      <label for="bookId">Référence livre :</label>
-      <div class="book-search">
-        <input 
-          type="text" 
-          id="bookId" 
-          placeholder="Enter book ID (e.g., 12148/btv1b52506706r)"
-          value="12148/btv1b52506706r"
-          aria-label="Book ID"
-        >
-        <button id="loadBookBtn">Charger</button>
-      </div>
-    </div>
-
-    <nav class="navigation" role="navigation">
-      <button id="prevBtn" aria-label="Page précédente">Précédent</button>
-      <span class="page-info" aria-live="polite">
-        <input type="number" id="pageInput" min="1" value="1" aria-label="Numéro de page"> 
-        / 
-        <input type="number" id="maxPageInput" min="1" value="364" aria-label="Nombre total de pages">
-      </span>
-      <button id="nextBtn" aria-label="Page suivante">Suivant</button>
-    </nav>
-    
-    <button id="themeToggleBtn" aria-label="Changer de thème">Thème sombre</button>
-  </header>
-
-  <main>
-    <div class="spread">
-      <div class="page left-page" id="leftPage">
-        <div class="img-container">
-          <div class="loader"></div>
-          <img id="leftImage" src="" alt="Page gauche" loading="lazy" data-translate-x="0" data-translate-y="0">
-        </div>
-        <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
-        <div class="zoom-container">
-          <input type="range" class="zoom-slider" id="leftZoomSlider" min="1" max="3" step="0.1" value="1">
-          <span class="zoom-value" id="leftZoomValue">100%</span>
-          <button class="reset-zoom-btn" id="leftResetZoomBtn">Réinitialiser</button>
+  <body>
+    <header>
+      <h1>Mandragore GUI</h1>
+      <div class="book-search-container">
+        <label for="bookId">Référence livre :</label>
+        <div class="book-search">
+          <input 
+            type="text" 
+            id="bookId" 
+            placeholder="Enter book ID (e.g., 12148/btv1b52506706r)"
+            value="12148/btv1b52506706r"
+            aria-label="Book ID"
+          />
+          <button id="loadBookBtn">Charger</button>
         </div>
       </div>
-      <div class="page right-page" id="rightPage">
-        <div class="img-container">
-          <div class="loader"></div>
-          <img id="rightImage" src="" alt="Page droite" loading="lazy" data-translate-x="0" data-translate-y="0">
-        </div>
-        <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
-        <div class="zoom-container">
-          <input type="range" class="zoom-slider" id="rightZoomSlider" min="1" max="3" step="0.1" value="1">
-          <span class="zoom-value" id="rightZoomValue">100%</span>
-          <button class="reset-zoom-btn" id="rightResetZoomBtn">Réinitialiser</button>
-        </div>
-      </div>
-      <button class="nav-arrow left-arrow">&larr;</button>
-      <button class="nav-arrow right-arrow">&rarr;</button>
-    </div>
-  </main>
+      <nav class="navigation" role="navigation">
+        <button id="prevBtn" aria-label="Page précédente">Précédent</button>
+        <span class="page-info" aria-live="polite">
+          <input type="number" id="pageInput" min="1" value="1" aria-label="Numéro de page" /> 
+          / 
+          <input type="number" id="maxPageInput" min="1" value="364" aria-label="Nombre total de pages" />
+        </span>
+        <button id="nextBtn" aria-label="Page suivante">Suivant</button>
+      </nav>
+      <button id="themeToggleBtn" aria-label="Changer de thème">Thème sombre</button>
+    </header>
   
-  <script>
-    // Theme Management
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function updateTheme(isDark) {
-      document.body.classList.toggle('dark', isDark);
-      themeToggleBtn.textContent = isDark ? "Thème clair" : "Thème sombre";
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    }
-
-    // Initialize theme
-    const savedTheme = localStorage.getItem('theme');
-    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark.matches;
-    updateTheme(isDark);
-
-    themeToggleBtn.addEventListener('click', () => {
-      updateTheme(!document.body.classList.contains('dark'));
-    });
-
-    prefersDark.addEventListener('change', (e) => {
-      if (!localStorage.getItem('theme')) {
-        updateTheme(e.matches);
+    <main>
+      <div class="spread">
+        <div class="page left-page" id="leftPage">
+          <div class="img-container">
+            <div class="loader"></div>
+            <img id="leftImage" src="" alt="Page gauche" loading="lazy" data-translate-x="0" data-translate-y="0" />
+          </div>
+          <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
+          <div class="zoom-container">
+            <input type="range" class="zoom-slider" id="leftZoomSlider" min="1" max="3" step="0.1" value="1" />
+            <span class="zoom-value" id="leftZoomValue">100%</span>
+            <button class="reset-zoom-btn" id="leftResetZoomBtn">Réinitialiser</button>
+          </div>
+        </div>
+        <div class="page right-page" id="rightPage">
+          <div class="img-container">
+            <div class="loader"></div>
+            <img id="rightImage" src="" alt="Page droite" loading="lazy" data-translate-x="0" data-translate-y="0" />
+          </div>
+          <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
+          <div class="zoom-container">
+            <input type="range" class="zoom-slider" id="rightZoomSlider" min="1" max="3" step="0.1" value="1" />
+            <span class="zoom-value" id="rightZoomValue">100%</span>
+            <button class="reset-zoom-btn" id="rightResetZoomBtn">Réinitialiser</button>
+          </div>
+        </div>
+        <button class="nav-arrow left-arrow">&larr;</button>
+        <button class="nav-arrow right-arrow">&rarr;</button>
+      </div>
+    </main>
+    
+    <script>
+      // Theme Management
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  
+      function updateTheme(isDark) {
+        document.body.classList.toggle('dark', isDark);
+        themeToggleBtn.textContent = isDark ? "Thème clair" : "Thème sombre";
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
       }
-    });
-
-    // Book Management
-    const bookInput = document.getElementById('bookId');
-    const loadBookBtn = document.getElementById('loadBookBtn');
-    const maxPageInput = document.getElementById('maxPageInput');
-    const baseUrl = "https://mandragore.bnf.fr/iiif/ark:/";
-    let currentBookId = "12148/btv1b52506706r";
-    let totalPages = parseInt(maxPageInput.value, 10);
-
-    loadBookBtn.addEventListener('click', () => {
-      const newBookId = bookInput.value.trim();
-      if (newBookId !== currentBookId) {
-        currentBookId = newBookId;
-        currentRightPage = 1;
-        updateSpread();
-      }
-    });
-
-    maxPageInput.addEventListener('change', () => {
-      totalPages = parseInt(maxPageInput.value, 10);
-      pageInput.max = totalPages;
-      if(currentRightPage > totalPages) {
-        currentRightPage = totalPages;
-        updateSpread();
-      }
-    });
-
-    function getImageUrl(page) {
-      return `${baseUrl}${currentBookId}/f${page}.highres`;
-    }
-
-    // DOM References
-    const leftPageDiv = document.getElementById('leftPage');
-    const rightPageDiv = document.getElementById('rightPage');
-    const leftImage = document.getElementById('leftImage');
-    const rightImage = document.getElementById('rightImage');
-    const downloadBtnLeft = document.getElementById('downloadBtnLeft');
-    const downloadBtnRight = document.getElementById('downloadBtnRight');
-    const pageInput = document.getElementById('pageInput');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const leftArrow = document.querySelector('.left-arrow');
-    const rightArrow = document.querySelector('.right-arrow');
-
-    const leftZoomSlider = document.getElementById('leftZoomSlider');
-    const leftZoomValue = document.getElementById('leftZoomValue');
-    const leftResetZoomBtn = document.getElementById('leftResetZoomBtn');
-
-    const rightZoomSlider = document.getElementById('rightZoomSlider');
-    const rightZoomValue = document.getElementById('rightZoomValue');
-    const rightResetZoomBtn = document.getElementById('rightResetZoomBtn');
-
-    let currentRightPage = 1;
-
-    // Spread Management
-    function updateSpread() {
-      pageInput.value = currentRightPage;
-      leftZoomSlider.value = 1;
-      leftZoomValue.textContent = "100%";
-      rightZoomSlider.value = 1;
-      rightZoomValue.textContent = "100%";
-      resetPan(leftImage);
-      resetPan(rightImage);
-      applyTransform(leftImage, 1);
-      applyTransform(rightImage, 1);
-
-      const leftLoader = leftImage.parentElement.querySelector('.loader');
-      const rightLoader = rightImage.parentElement.querySelector('.loader');
-      if(leftLoader) leftLoader.style.display = 'block';
-      if(rightLoader) rightLoader.style.display = 'block';
-
-      if (currentRightPage === 1) {
-        leftPageDiv.style.display = "none";
-        rightPageDiv.classList.add("single");
-        rightImage.src = getImageUrl(1);
-        rightImage.alt = "Page 1 (couverture)";
-      } else if (currentRightPage === totalPages && totalPages % 2 === 0) {
-        leftPageDiv.style.display = "none";
-        rightPageDiv.classList.add("single");
-        rightImage.src = getImageUrl(totalPages);
-        rightImage.alt = "Page " + totalPages;
-      } else {
-        leftPageDiv.style.display = "block";
-        rightPageDiv.classList.remove("single");
-        leftImage.src = getImageUrl(currentRightPage - 1);
-        leftImage.alt = "Page " + (currentRightPage - 1);
-        rightImage.src = getImageUrl(currentRightPage);
-        rightImage.alt = "Page " + currentRightPage;
-      }
-
-      prevBtn.disabled = (currentRightPage === 1);
-      nextBtn.disabled = (currentRightPage === totalPages);
-    }
-
-    // Navigation
-    function goToPage(page) {
-      if (isNaN(page) || page < 1 || page > totalPages) {
-        alert("Veuillez entrer un numéro de page valide entre 1 et " + totalPages);
-        pageInput.value = currentRightPage;
-        return;
-      }
-      if (page === 1) {
-        currentRightPage = 1;
-      } else if (page % 2 === 0) {
-        currentRightPage = (page === totalPages) ? totalPages : page + 1;
-      } else {
-        currentRightPage = page;
-      }
-      updateSpread();
-    }
-
-    prevBtn.addEventListener('click', () => {
-      if (currentRightPage === 1) return;
-      if (currentRightPage === totalPages && totalPages % 2 === 0) {
-        currentRightPage = totalPages - 1;
-      } else {
-        currentRightPage = (currentRightPage - 2 < 1) ? 1 : currentRightPage - 2;
-      }
-      updateSpread();
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentRightPage === 1) {
-        currentRightPage = 3;
-      } else if (currentRightPage < totalPages - 1) {
-        currentRightPage += 2;
-      } else if (currentRightPage < totalPages) {
-        currentRightPage = totalPages;
-      }
-      updateSpread();
-    });
-
-    pageInput.addEventListener('change', () => {
-      const page = parseInt(pageInput.value, 10);
-      goToPage(page);
-    });
-
-    // Zoom and Panning
-    function applyTransform(img, zoom) {
-      let tx = parseFloat(img.dataset.translateX) || 0;
-      let ty = parseFloat(img.dataset.translateY) || 0;
-      img.style.transform = `translate(${tx}px, ${ty}px) scale(${zoom})`;
-    }
-
-    function resetPan(img) {
-      img.dataset.translateX = 0;
-      img.dataset.translateY = 0;
-    }
-
-    function addPan(img, zoomSlider) {
-      let isDragging = false, startX, startY;
-      img.addEventListener('mousedown', (e) => {
-        let zoom = parseFloat(zoomSlider.value);
-        if (zoom <= 1) return;
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        img.style.cursor = 'grabbing';
-        e.preventDefault();
+  
+      // Initialize theme
+      const savedTheme = localStorage.getItem('theme');
+      const isDark = savedTheme ? savedTheme === 'dark' : prefersDark.matches;
+      updateTheme(isDark);
+  
+      themeToggleBtn.addEventListener('click', () => {
+        updateTheme(!document.body.classList.contains('dark'));
       });
-
-      document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        let dx = e.clientX - startX;
-        let dy = e.clientY - startY;
-        startX = e.clientX;
-        startY = e.clientY;
-        let tx = parseFloat(img.dataset.translateX) || 0;
-        let ty = parseFloat(img.dataset.translateY) || 0;
-        tx += dx;
-        ty += dy;
-        img.dataset.translateX = tx;
-        img.dataset.translateY = ty;
-        let zoom = parseFloat(zoomSlider.value);
-        img.style.transform = `translate(${tx}px, ${ty}px) scale(${zoom})`;
-      });
-
-      document.addEventListener('mouseup', () => {
-        if (isDragging) {
-          isDragging = false;
-          img.style.cursor = 'grab';
+  
+      prefersDark.addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          updateTheme(e.matches);
         }
       });
-
-      img.addEventListener('touchstart', (e) => {
-        let zoom = parseFloat(zoomSlider.value);
-        if (zoom <= 1) return;
-        isDragging = true;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        e.preventDefault();
+  
+      // Book Management
+      const bookInput = document.getElementById('bookId');
+      const loadBookBtn = document.getElementById('loadBookBtn');
+      const maxPageInput = document.getElementById('maxPageInput');
+      const baseUrl = "https://mandragore.bnf.fr/iiif/ark:/";
+      let currentBookId = "12148/btv1b52506706r";
+      let totalPages = parseInt(maxPageInput.value, 10);
+  
+      loadBookBtn.addEventListener('click', () => {
+        const newBookId = bookInput.value.trim();
+        if (newBookId !== currentBookId) {
+          currentBookId = newBookId;
+          currentRightPage = 1;
+          updateSpread();
+        }
       });
-
-      img.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        let dx = e.touches[0].clientX - startX;
-        let dy = e.touches[0].clientY - startY;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
+  
+      maxPageInput.addEventListener('change', () => {
+        totalPages = parseInt(maxPageInput.value, 10);
+        pageInput.max = totalPages;
+        if(currentRightPage > totalPages) {
+          currentRightPage = totalPages;
+          updateSpread();
+        }
+      });
+  
+      function getImageUrl(page) {
+        return `${baseUrl}${currentBookId}/f${page}.highres`;
+      }
+  
+      // DOM References
+      const leftPageDiv = document.getElementById('leftPage');
+      const rightPageDiv = document.getElementById('rightPage');
+      const leftImage = document.getElementById('leftImage');
+      const rightImage = document.getElementById('rightImage');
+      const downloadBtnLeft = document.getElementById('downloadBtnLeft');
+      const downloadBtnRight = document.getElementById('downloadBtnRight');
+      const pageInput = document.getElementById('pageInput');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const leftArrow = document.querySelector('.left-arrow');
+      const rightArrow = document.querySelector('.right-arrow');
+  
+      const leftZoomSlider = document.getElementById('leftZoomSlider');
+      const leftZoomValue = document.getElementById('leftZoomValue');
+      const leftResetZoomBtn = document.getElementById('leftResetZoomBtn');
+  
+      const rightZoomSlider = document.getElementById('rightZoomSlider');
+      const rightZoomValue = document.getElementById('rightZoomValue');
+      const rightResetZoomBtn = document.getElementById('rightResetZoomBtn');
+  
+      let currentRightPage = 1;
+  
+      // Spread Management
+      function updateSpread() {
+        pageInput.value = currentRightPage;
+        leftZoomSlider.value = 1;
+        leftZoomValue.textContent = "100%";
+        rightZoomSlider.value = 1;
+        rightZoomValue.textContent = "100%";
+        resetPan(leftImage);
+        resetPan(rightImage);
+        applyTransform(leftImage, 1);
+        applyTransform(rightImage, 1);
+  
+        const leftLoader = leftImage.parentElement.querySelector('.loader');
+        const rightLoader = rightImage.parentElement.querySelector('.loader');
+        if(leftLoader) leftLoader.style.display = 'block';
+        if(rightLoader) rightLoader.style.display = 'block';
+  
+        if (currentRightPage === 1) {
+          leftPageDiv.style.display = "none";
+          rightPageDiv.classList.add("single");
+          rightImage.src = getImageUrl(1);
+          rightImage.alt = "Page 1 (couverture)";
+        } else if (currentRightPage === totalPages && totalPages % 2 === 0) {
+          leftPageDiv.style.display = "none";
+          rightPageDiv.classList.add("single");
+          rightImage.src = getImageUrl(totalPages);
+          rightImage.alt = "Page " + totalPages;
+        } else {
+          leftPageDiv.style.display = "block";
+          rightPageDiv.classList.remove("single");
+          leftImage.src = getImageUrl(currentRightPage - 1);
+          leftImage.alt = "Page " + (currentRightPage - 1);
+          rightImage.src = getImageUrl(currentRightPage);
+          rightImage.alt = "Page " + currentRightPage;
+        }
+  
+        prevBtn.disabled = (currentRightPage === 1);
+        nextBtn.disabled = (currentRightPage === totalPages);
+      }
+  
+      // Navigation
+      function goToPage(page) {
+        if (isNaN(page) || page < 1 || page > totalPages) {
+          alert("Veuillez entrer un numéro de page valide entre 1 et " + totalPages);
+          pageInput.value = currentRightPage;
+          return;
+        }
+        if (page === 1) {
+          currentRightPage = 1;
+        } else if (page % 2 === 0) {
+          currentRightPage = (page === totalPages) ? totalPages : page + 1;
+        } else {
+          currentRightPage = page;
+        }
+        updateSpread();
+      }
+  
+      prevBtn.addEventListener('click', () => {
+        if (currentRightPage === 1) return;
+        if (currentRightPage === totalPages && totalPages % 2 === 0) {
+          currentRightPage = totalPages - 1;
+        } else {
+          currentRightPage = (currentRightPage - 2 < 1) ? 1 : currentRightPage - 2;
+        }
+        updateSpread();
+      });
+  
+      nextBtn.addEventListener('click', () => {
+        if (currentRightPage === 1) {
+          currentRightPage = 3;
+        } else if (currentRightPage < totalPages - 1) {
+          currentRightPage += 2;
+        } else if (currentRightPage < totalPages) {
+          currentRightPage = totalPages;
+        }
+        updateSpread();
+      });
+  
+      pageInput.addEventListener('change', () => {
+        const page = parseInt(pageInput.value, 10);
+        goToPage(page);
+      });
+  
+      // Zoom and Panning
+      function applyTransform(img, zoom) {
         let tx = parseFloat(img.dataset.translateX) || 0;
         let ty = parseFloat(img.dataset.translateY) || 0;
-        tx += dx;
-        ty += dy;
-        img.dataset.translateX = tx;
-        img.dataset.translateY = ty;
-        let zoom = parseFloat(zoomSlider.value);
         img.style.transform = `translate(${tx}px, ${ty}px) scale(${zoom})`;
+      }
+  
+      function resetPan(img) {
+        img.dataset.translateX = 0;
+        img.dataset.translateY = 0;
+      }
+  
+      function addPan(img, zoomSlider) {
+        let isDragging = false, startX, startY;
+        img.addEventListener('mousedown', (e) => {
+          let zoom = parseFloat(zoomSlider.value);
+          if (zoom <= 1) return;
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          img.style.cursor = 'grabbing';
+          e.preventDefault();
+        });
+  
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          let dx = e.clientX - startX;
+          let dy = e.clientY - startY;
+          startX = e.clientX;
+          startY = e.clientY;
+          let tx = parseFloat(img.dataset.translateX) || 0;
+          let ty = parseFloat(img.dataset.translateY) || 0;
+          tx += dx;
+          ty += dy;
+          img.dataset.translateX = tx;
+          img.dataset.translateY = ty;
+          let zoom = parseFloat(zoomSlider.value);
+          img.style.transform = `translate(${tx}px, ${ty}px) scale(${zoom})`;
+        });
+  
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            img.style.cursor = 'grab';
+          }
+        });
+  
+        img.addEventListener('touchstart', (e) => {
+          let zoom = parseFloat(zoomSlider.value);
+          if (zoom <= 1) return;
+          isDragging = true;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          e.preventDefault();
+        });
+  
+        img.addEventListener('touchmove', (e) => {
+          if (!isDragging) return;
+          let dx = e.touches[0].clientX - startX;
+          let dy = e.touches[0].clientY - startY;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          let tx = parseFloat(img.dataset.translateX) || 0;
+          let ty = parseFloat(img.dataset.translateY) || 0;
+          tx += dx;
+          ty += dy;
+          img.dataset.translateX = tx;
+          img.dataset.translateY = ty;
+          let zoom = parseFloat(zoomSlider.value);
+          img.style.transform = `translate(${tx}px, ${ty}px) scale(${zoom})`;
+        });
+  
+        img.addEventListener('touchend', () => {
+          isDragging = false;
+        });
+      }
+  
+      leftImage.addEventListener('load', () => {
+        leftImage.parentElement.querySelector('.loader').style.display = 'none';
       });
-
-      img.addEventListener('touchend', () => {
-        isDragging = false;
+  
+      rightImage.addEventListener('load', () => {
+        rightImage.parentElement.querySelector('.loader').style.display = 'none';
       });
-    }
-
-    leftImage.addEventListener('load', () => {
-      leftImage.parentElement.querySelector('.loader').style.display = 'none';
-    });
-
-    rightImage.addEventListener('load', () => {
-      rightImage.parentElement.querySelector('.loader').style.display = 'none';
-    });
-
-    leftZoomSlider.addEventListener('input', () => {
-      let zoomLevel = parseFloat(leftZoomSlider.value);
-      leftZoomValue.textContent = Math.round(zoomLevel * 100) + "%";
-      applyTransform(leftImage, zoomLevel);
-    });
-
-    leftResetZoomBtn.addEventListener('click', () => {
-      leftZoomSlider.value = 1;
-      leftZoomValue.textContent = "100%";
-      resetPan(leftImage);
-      applyTransform(leftImage, 1);
-    });
-
-    leftImage.addEventListener('click', () => {
-      let currentZoom = parseFloat(leftZoomSlider.value);
-      let newZoom = currentZoom === 1 ? 2 : 1;
-      leftZoomSlider.value = newZoom;
-      leftZoomValue.textContent = Math.round(newZoom * 100) + "%";
-      if(newZoom === 1) resetPan(leftImage);
-      applyTransform(leftImage, newZoom);
-    });
-
-    rightZoomSlider.addEventListener('input', () => {
-      let zoomLevel = parseFloat(rightZoomSlider.value);
-      rightZoomValue.textContent = Math.round(zoomLevel * 100) + "%";
-      applyTransform(rightImage, zoomLevel);
-    });
-
-    rightResetZoomBtn.addEventListener('click', () => {
-      rightZoomSlider.value = 1;
-      rightZoomValue.textContent = "100%";
-      resetPan(rightImage);
-      applyTransform(rightImage, 1);
-    });
-
-    rightImage.addEventListener('click', () => {
-      let currentZoom = parseFloat(rightZoomSlider.value);
-      let newZoom = currentZoom === 1 ? 2 : 1;
-      rightZoomSlider.value = newZoom;
-      rightZoomValue.textContent = Math.round(newZoom * 100) + "%";
-      if(newZoom === 1) resetPan(rightImage);
-      applyTransform(rightImage, newZoom);
-    });
-
-    addPan(leftImage, leftZoomSlider);
-    addPan(rightImage, rightZoomSlider);
-
-    // Download
-    downloadBtnRight.addEventListener('click', () => {
-      window.open(getImageUrl(currentRightPage), '_blank');
-    });
-
-    downloadBtnLeft.addEventListener('click', () => {
-      window.open(getImageUrl(currentRightPage - 1), '_blank');
-    });
-
-    // Keyboard Navigation
-    document.addEventListener('keydown', (e) => {
-      if (e.key === "ArrowLeft") prevBtn.click();
-      else if (e.key === "ArrowRight") nextBtn.click();
-    });
-
-    leftArrow.addEventListener('click', () => prevBtn.click());
-    rightArrow.addEventListener('click', () => nextBtn.click());
-
-    // Initialization
-    updateSpread();
-  </script>
-</body>
+  
+      leftZoomSlider.addEventListener('input', () => {
+        let zoomLevel = parseFloat(leftZoomSlider.value);
+        leftZoomValue.textContent = Math.round(zoomLevel * 100) + "%";
+        applyTransform(leftImage, zoomLevel);
+      });
+  
+      leftResetZoomBtn.addEventListener('click', () => {
+        leftZoomSlider.value = 1;
+        leftZoomValue.textContent = "100%";
+        resetPan(leftImage);
+        applyTransform(leftImage, 1);
+      });
+  
+      leftImage.addEventListener('click', () => {
+        let currentZoom = parseFloat(leftZoomSlider.value);
+        let newZoom = currentZoom === 1 ? 2 : 1;
+        leftZoomSlider.value = newZoom;
+        leftZoomValue.textContent = Math.round(newZoom * 100) + "%";
+        if(newZoom === 1) resetPan(leftImage);
+        applyTransform(leftImage, newZoom);
+      });
+  
+      rightZoomSlider.addEventListener('input', () => {
+        let zoomLevel = parseFloat(rightZoomSlider.value);
+        rightZoomValue.textContent = Math.round(zoomLevel * 100) + "%";
+        applyTransform(rightImage, zoomLevel);
+      });
+  
+      rightResetZoomBtn.addEventListener('click', () => {
+        rightZoomSlider.value = 1;
+        rightZoomValue.textContent = "100%";
+        resetPan(rightImage);
+        applyTransform(rightImage, 1);
+      });
+  
+      rightImage.addEventListener('click', () => {
+        let currentZoom = parseFloat(rightZoomSlider.value);
+        let newZoom = currentZoom === 1 ? 2 : 1;
+        rightZoomSlider.value = newZoom;
+        rightZoomValue.textContent = Math.round(newZoom * 100) + "%";
+        if(newZoom === 1) resetPan(rightImage);
+        applyTransform(rightImage, newZoom);
+      });
+  
+      addPan(leftImage, leftZoomSlider);
+      addPan(rightImage, rightZoomSlider);
+  
+      // Download
+      downloadBtnRight.addEventListener('click', () => {
+        window.open(getImageUrl(currentRightPage), '_blank');
+      });
+  
+      downloadBtnLeft.addEventListener('click', () => {
+        window.open(getImageUrl(currentRightPage - 1), '_blank');
+      });
+  
+      // Keyboard Navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowLeft") prevBtn.click();
+        else if (e.key === "ArrowRight") nextBtn.click();
+      });
+  
+      leftArrow.addEventListener('click', () => prevBtn.click());
+      rightArrow.addEventListener('click', () => nextBtn.click());
+  
+      // Initialization
+      updateSpread();
+    </script>
+  </body>
 </html>
