@@ -13,6 +13,7 @@
       /* CSS Variables */
       :root {
         --bg-primary: #ffffff;
+        --bg-primary-rgb: 255, 255, 255;
         --bg-secondary: #f5f5f5;
         --text-primary: #000000;
         --text-secondary: #404040;
@@ -24,6 +25,7 @@
       }
       body.dark {
         --bg-primary: #121212;
+        --bg-primary-rgb: 18, 18, 18;
         --bg-secondary: #1e1e1e;
         --text-primary: #ffffff;
         --text-secondary: #a0a0a0;
@@ -52,14 +54,18 @@
         top: 0;
         left: 0;
         right: 0;
-        z-index: 1000;
+        z-index: 2000;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
         box-shadow: 0 2px 4px var(--shadow-color);
-        transition: background-color 0.3s, border-color 0.3s;
+        transition: background-color 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+      }
+      header.blur {
+        backdrop-filter: blur(8px);
+        background: rgba(var(--bg-primary-rgb), 0.8);
       }
       header h1 {
         margin: 0;
@@ -160,7 +166,8 @@
         margin-top: 100px;
         padding: 1rem;
         height: calc(100vh - 100px);
-        overflow: hidden;
+        overflow: visible;
+        position: relative;
       }
       /* Error container styling */
       #errorContainer {
@@ -172,6 +179,7 @@
       #spreadContainer {
         display: block;
         height: 100%;
+        overflow: visible;
       }
       .spread {
         display: flex;
@@ -183,6 +191,7 @@
         flex-wrap: nowrap;
         height: calc(100vh - 140px);
         align-items: center;
+        overflow: hidden;
       }
       .page {
         background: var(--bg-secondary);
@@ -195,9 +204,31 @@
         height: 100%;
         display: flex;
         align-items: center;
+        overflow: hidden;
       }
       .page.single {
         max-width: 100%;
+      }
+      /* Séparateur central avec effet de flou */
+      .spread::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background: var(--border-color);
+        transform: translateX(-50%);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        z-index: 4;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+      /* Masquer la ligne centrale sur la page de couverture */
+      .spread[data-page="1"]::after {
+        opacity: 0;
       }
       .img-container {
         position: relative;
@@ -210,6 +241,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 1;
+        clip-path: inset(0);
+      }
+      /* Désactiver le zoom sur la page de couverture */
+      .spread[data-page="1"] .img-container img {
+        cursor: default;
+        pointer-events: none;
       }
       .img-container img {
         max-width: 100%;
@@ -220,9 +258,18 @@
         transition: transform 0.3s ease;
         cursor: zoom-in;
         transform-origin: center center;
+        position: relative;
+        z-index: 2;
       }
       .img-container img.zoomed {
         cursor: grab;
+        z-index: 3;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: contain;
       }
       .img-container img.zoomed:active {
         cursor: grabbing;
@@ -242,7 +289,7 @@
         opacity: 0;
         transition: opacity 0.3s ease;
         pointer-events: none;
-        z-index: 100;
+        z-index: 0;
       }
       #leftImage {
         width: auto;
@@ -261,6 +308,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        z-index: 0;
+        overflow: visible;
       }
       @keyframes spin {
         0% { transform: translate(-50%, -50%) rotate(0deg); }
@@ -283,7 +332,7 @@
         background: var(--button-bg);
         color: var(--button-text);
         transition: background 0.3s, color 0.3s;
-        z-index: 10;
+        z-index: 1500;
       }
       .nav-arrow:hover,
       .nav-arrow:focus {
@@ -684,6 +733,9 @@
         resetPan(leftImage);
         resetPan(rightImage);
         
+        // Mise à jour de l'attribut data-page
+        document.querySelector('.spread').setAttribute('data-page', currentRightPage);
+        
         // Réinitialisation du zoom
         leftImage.style.transform = 'scale(1)';
         rightImage.style.transform = 'scale(1)';
@@ -823,21 +875,66 @@
         img.dataset.translateX = 0;
         img.dataset.translateY = 0;
         updateImageTransform(img, 1);
+        document.querySelector('header').classList.remove('blur');
       }
 
       function updateImageTransform(img, scale) {
         const tx = parseFloat(img.dataset.translateX || 0);
         const ty = parseFloat(img.dataset.translateY || 0);
         
-        img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-        img.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
-        img.classList.toggle('zoomed', scale > 1);
+        if (scale > 1) {
+          img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+          img.classList.add('zoomed');
+          img.style.cursor = 'grab';
+          document.querySelector('header').classList.add('blur');
+        } else {
+          img.style.transform = 'scale(1)';
+          img.classList.remove('zoomed');
+          img.style.cursor = 'zoom-in';
+          document.querySelector('header').classList.remove('blur');
+        }
         
         // Mise à jour de l'indicateur de zoom
         const zoomLevel = img.parentElement.querySelector('.zoom-level');
         if (zoomLevel) {
           zoomLevel.textContent = `${Math.round(scale * 100)}%`;
         }
+      }
+
+      function handleDragMove(e) {
+        if (!isDragging) return;
+        
+        let clientX, clientY;
+        if (e.type === 'mousemove') {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        } else if (e.type === 'touchmove') {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        }
+        
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        
+        const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
+        
+        // Calculer les limites de déplacement
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const imgWidth = img.naturalWidth * scale;
+        const imgHeight = img.naturalHeight * scale;
+        
+        const maxX = Math.max(0, (imgWidth - viewportWidth) / 2);
+        const maxY = Math.max(0, (imgHeight - viewportHeight) / 2);
+        
+        // Limiter le déplacement
+        const newX = Math.min(Math.max(currentX + dx, -maxX), maxX);
+        const newY = Math.min(Math.max(currentY + dy, -maxY), maxY);
+        
+        img.dataset.translateX = newX;
+        img.dataset.translateY = newY;
+        
+        updateImageTransform(img, scale);
       }
 
       function initDragAndDrop(img) {
@@ -853,11 +950,11 @@
           img.style.cursor = 'grabbing';
           
           if (e.type === 'mousedown') {
-            startX = e.clientX;
-            startY = e.clientY;
+          startX = e.clientX;
+          startY = e.clientY;
           } else if (e.type === 'touchstart') {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
           }
           
           currentX = parseFloat(img.dataset.translateX || 0);
@@ -881,13 +978,24 @@
           const dx = clientX - startX;
           const dy = clientY - startY;
           
-          const newX = currentX + dx;
-          const newY = currentY + dy;
+          const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
+          
+          // Calculer les limites de déplacement
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          const imgWidth = img.naturalWidth * scale;
+          const imgHeight = img.naturalHeight * scale;
+          
+          const maxX = Math.max(0, (imgWidth - viewportWidth) / 2);
+          const maxY = Math.max(0, (imgHeight - viewportHeight) / 2);
+          
+          // Limiter le déplacement
+          const newX = Math.min(Math.max(currentX + dx, -maxX), maxX);
+          const newY = Math.min(Math.max(currentY + dy, -maxY), maxY);
           
           img.dataset.translateX = newX;
           img.dataset.translateY = newY;
           
-          const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
           updateImageTransform(img, scale);
         }
 
