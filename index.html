@@ -209,26 +209,9 @@
       .page.single {
         max-width: 100%;
       }
-      /* Séparateur central avec effet de flou */
+      /* Retirer la bande centrale */
       .spread::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 0;
-        height: 100%;
-        width: 2px;
-        background: var(--border-color);
-        transform: translateX(-50%);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        z-index: 4;
-        opacity: 1;
-        transition: opacity 0.3s ease;
-      }
-      /* Masquer la ligne centrale sur la page de couverture */
-      .spread[data-page="1"]::after {
-        opacity: 0;
+        display: none;
       }
       .img-container {
         position: relative;
@@ -255,11 +238,12 @@
         width: auto;
         height: auto;
         object-fit: contain;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: zoom-in;
         transform-origin: center center;
         position: relative;
         z-index: 2;
+        will-change: transform;
       }
       .img-container img.zoomed {
         cursor: grab;
@@ -270,26 +254,31 @@
         width: 100vw;
         height: 100vh;
         object-fit: contain;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .img-container img.zoomed:active {
+      .img-container img.zoomed.panning {
+        transition: none;
         cursor: grabbing;
-      }
-      .img-container:hover .zoom-level {
-        opacity: 1;
       }
       .zoom-level {
         position: absolute;
         top: 1rem;
         left: 1rem;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.85);
         color: white;
-        padding: 0.5rem;
-        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
         font-size: 0.9rem;
         opacity: 0;
         transition: opacity 0.3s ease;
         pointer-events: none;
-        z-index: 0;
+        z-index: 5;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+      .img-container:hover .zoom-level,
+      .img-container img.zoomed ~ .zoom-level {
+        opacity: 1;
       }
       #leftImage {
         width: auto;
@@ -560,6 +549,10 @@
       
       <div style="display: flex; gap: 0.5rem;">
         <button id="themeToggleBtn" aria-label="Changer de thème">Thème sombre</button>
+        <button class="download-btn" id="downloadBtn">Télécharger</button>
+        <span class="tooltip-text" style="left: -160px; top: 120%;">
+          Cliquez pour télécharger le livre en haute résolution.
+        </span>
         <a href="https://github.com/bastonus/MandragoreGUI"
            target="_blank"
            class="github-btn"
@@ -577,36 +570,40 @@
       <div id="spreadContainer">
         <div class="spread">
           <div class="page left-page" id="leftPage">
-            <div class="img-container">
+            <div class="img-container" style="position: relative;">
               <div class="loader"></div>
               <img id="leftImage" src="" alt="Page gauche" loading="lazy" data-translate-x="0" data-translate-y="0" />
               <div class="zoom-level">150%</div>
-            </div>
-            <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
-              <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
-              <span class="tooltip-text" style="left: -160px; top: 120%;">
-                Le téléchargement s'ouvrira dans un nouvel onglet.<br/>
-                Le document est un fichier <strong>.highres</strong>, 
-                mais c'est en réalité une image <strong>.jpg</strong>.<br/>
-                Vous pouvez donc renommer l'extension lors du téléchargement.
-              </span>
+              <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                <a href="" id="downloadLinkLeft" target="_blank">
+                  <button class="download-btn" id="downloadBtnLeft">Télécharger l'image</button>
+                </a>
+                <span class="tooltip-text" style="left: -160px; top: 120%;">
+                  Le téléchargement s'ouvrira dans un nouvel onglet.<br/>
+                  Le document est un fichier <strong>.highres</strong>, 
+                  mais c'est en réalité une image <strong>.jpg</strong>.<br/>
+                  Vous pouvez donc renommer l'extension lors du téléchargement.
+                </span>
+              </div>
             </div>
           </div>
           
           <div class="page right-page" id="rightPage">
-            <div class="img-container">
+            <div class="img-container" style="position: relative;">
               <div class="loader"></div>
               <img id="rightImage" src="" alt="Page droite" loading="lazy" data-translate-x="0" data-translate-y="0" />
               <div class="zoom-level">150%</div>
-            </div>
-            <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem;">
-              <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
-              <span class="tooltip-text" style="left: -160px; top: 120%;">
-                Le téléchargement s'ouvrira dans un nouvel onglet.<br/>
-                Le document est un fichier <strong>.highres</strong>, 
-                mais c'est en réalité une image <strong>.jpg</strong>.<br/>
-                Vous pouvez donc renommer l'extension lors du téléchargement.
-              </span>
+              <div class="tooltip-container" style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                <a href="" id="downloadLinkRight" target="_blank">
+                  <button class="download-btn" id="downloadBtnRight">Télécharger l'image</button>
+                </a>
+                <span class="tooltip-text" style="left: -160px; top: 120%;">
+                  Le téléchargement s'ouvrira dans un nouvel onglet.<br/>
+                  Le document est un fichier <strong>.highres</strong>, 
+                  mais c'est en réalité une image <strong>.jpg</strong>.<br/>
+                  Vous pouvez donc renommer l'extension lors du téléchargement.
+                </span>
+              </div>
             </div>
           </div>
           
@@ -730,8 +727,8 @@
 
       function updateSpread() {
         pageInput.value = currentRightPage;
-        resetPan(leftImage);
-        resetPan(rightImage);
+        resetZoomAndPosition(leftImage);
+        resetZoomAndPosition(rightImage);
         
         // Mise à jour de l'attribut data-page
         document.querySelector('.spread').setAttribute('data-page', currentRightPage);
@@ -748,7 +745,9 @@
         if (rightZoomLevel) rightZoomLevel.textContent = '100%';
 
         if (window.innerWidth <= 640) {
+          // Afficher une seule image sur les appareils mobiles
           leftPageDiv.style.display = "none";
+          rightPageDiv.style.display = "block";
           rightPageDiv.classList.add("single");
           rightImage.src = getImageUrl(currentRightPage);
           rightImage.alt = "Page " + currentRightPage;
@@ -765,6 +764,7 @@
             rightImage.alt = "Page " + totalPages;
           } else {
             leftPageDiv.style.display = "block";
+            rightPageDiv.style.display = "block";
             rightPageDiv.classList.remove("single");
             leftImage.src = getImageUrl(currentRightPage - 1);
             leftImage.alt = "Page " + (currentRightPage - 1);
@@ -774,6 +774,10 @@
         }
         prevBtn.disabled = (currentRightPage === 1);
         nextBtn.disabled = (currentRightPage === totalPages);
+
+        // Update download links
+        document.getElementById('downloadLinkLeft').href = getImageUrl(currentRightPage - 1);
+        document.getElementById('downloadLinkRight').href = getImageUrl(currentRightPage);
       }
 
       function goToPage(page) {
@@ -837,129 +841,110 @@
       leftArrow.addEventListener('click', prevPage);
       rightArrow.addEventListener('click', nextPage);
 
-      function resetPan(img) {
+      // Fonction pour réinitialiser le zoom et la position de l'image
+      function resetZoomAndPosition(img) {
         img.dataset.translateX = 0;
         img.dataset.translateY = 0;
+        img.style.transform = 'translate3d(0, 0, 0) scale(1)';
         img.classList.remove('zoomed');
+        img.style.cursor = 'zoom-in';
+        document.querySelector('header').classList.remove('blur');
+        const zoomLevel = img.parentElement.querySelector('.zoom-level');
+        if (zoomLevel) {
+          zoomLevel.textContent = '100%';
+          zoomLevel.style.opacity = '0';
+        }
       }
 
-      // Gestion du zoom et du déplacement
-      function handleWheel(e, img) {
+      // Amélioration du zoom pour le responsive
+      function handleWheelZoom(e, img) {
         if (!e.target.closest('.img-container')) return;
         e.preventDefault();
-        
+        const rect = img.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
         const currentScale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
-        const delta = e.deltaY * -0.01;
-        const newScale = Math.min(Math.max(1, currentScale + delta), 3);
-        
+        const delta = e.deltaY * -0.002;
+        const newScale = Math.min(Math.max(1, currentScale + delta * currentScale), 4);
         if (newScale === 1) {
-          resetImagePosition(img);
+          resetZoomAndPosition(img);
         } else {
+          const offsetX = (mouseX - rect.width / 2) * (newScale - 1);
+          const offsetY = (mouseY - rect.height / 2) * (newScale - 1);
+          img.dataset.translateX = -offsetX;
+          img.dataset.translateY = -offsetY;
           updateImageTransform(img, newScale);
         }
       }
 
-      function handleImageDoubleClick(e, img) {
+      // Fonction pour gérer le double-clic pour zoomer
+      function handleDoubleClickZoom(e, img) {
         e.preventDefault();
         const currentScale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
-        const newScale = currentScale === 1 ? 2 : 1;
-        
-        if (newScale === 1) {
-          resetImagePosition(img);
-        } else {
+        if (currentScale === 1) {
+          const rect = img.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          const newScale = 2.5;
+          const offsetX = (mouseX - rect.width / 2) * (newScale - 1);
+          const offsetY = (mouseY - rect.height / 2) * (newScale - 1);
+          img.dataset.translateX = -offsetX;
+          img.dataset.translateY = -offsetY;
           updateImageTransform(img, newScale);
+        } else {
+          resetZoomAndPosition(img);
         }
       }
 
-      function resetImagePosition(img) {
-        img.dataset.translateX = 0;
-        img.dataset.translateY = 0;
-        updateImageTransform(img, 1);
-        document.querySelector('header').classList.remove('blur');
-      }
-
+      // Fonction pour mettre à jour la transformation de l'image
       function updateImageTransform(img, scale) {
         const tx = parseFloat(img.dataset.translateX || 0);
         const ty = parseFloat(img.dataset.translateY || 0);
-        
-        if (scale > 1) {
-          img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-          img.classList.add('zoomed');
-          img.style.cursor = 'grab';
-          document.querySelector('header').classList.add('blur');
-        } else {
-          img.style.transform = 'scale(1)';
-          img.classList.remove('zoomed');
-          img.style.cursor = 'zoom-in';
-          document.querySelector('header').classList.remove('blur');
-        }
-        
-        // Mise à jour de l'indicateur de zoom
+        const imgRect = img.getBoundingClientRect();
+        const maxOffsetX = (scale - 1) * imgRect.width / 2;
+        const maxOffsetY = (scale - 1) * imgRect.height / 2;
+        const translateX = Math.min(Math.max(tx, -maxOffsetX), maxOffsetX);
+        const translateY = Math.min(Math.max(ty, -maxOffsetY), maxOffsetY);
+        img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+        img.classList.toggle('zoomed', scale > 1);
+        img.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+        document.querySelector('header').classList.toggle('blur', scale > 1);
         const zoomLevel = img.parentElement.querySelector('.zoom-level');
         if (zoomLevel) {
           zoomLevel.textContent = `${Math.round(scale * 100)}%`;
+          zoomLevel.style.opacity = scale > 1 ? '1' : '0';
         }
-      }
-
-      function handleDragMove(e) {
-        if (!isDragging) return;
-        
-        let clientX, clientY;
-        if (e.type === 'mousemove') {
-          clientX = e.clientX;
-          clientY = e.clientY;
-        } else if (e.type === 'touchmove') {
-          clientX = e.touches[0].clientX;
-          clientY = e.touches[0].clientY;
-        }
-        
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-        
-        const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
-        
-        // Calculer les limites de déplacement
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const imgWidth = img.naturalWidth * scale;
-        const imgHeight = img.naturalHeight * scale;
-        
-        const maxX = Math.max(0, (imgWidth - viewportWidth) / 2);
-        const maxY = Math.max(0, (imgHeight - viewportHeight) / 2);
-        
-        // Limiter le déplacement
-        const newX = Math.min(Math.max(currentX + dx, -maxX), maxX);
-        const newY = Math.min(Math.max(currentY + dy, -maxY), maxY);
-        
-        img.dataset.translateX = newX;
-        img.dataset.translateY = newY;
-        
-        updateImageTransform(img, scale);
       }
 
       function initDragAndDrop(img) {
         let isDragging = false;
         let startX, startY;
         let currentX, currentY;
+        let lastX, lastY;
+        let velocity = { x: 0, y: 0 };
+        let animationFrame;
 
         function handleDragStart(e) {
           const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
           if (scale <= 1) return;
 
           isDragging = true;
-          img.style.cursor = 'grabbing';
+          img.classList.add('panning');
           
           if (e.type === 'mousedown') {
-          startX = e.clientX;
-          startY = e.clientY;
+            startX = e.clientX;
+            startY = e.clientY;
           } else if (e.type === 'touchstart') {
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
           }
           
           currentX = parseFloat(img.dataset.translateX || 0);
           currentY = parseFloat(img.dataset.translateY || 0);
+          lastX = startX;
+          lastY = startY;
           
+          cancelAnimationFrame(animationFrame);
           e.preventDefault();
         }
 
@@ -978,23 +963,17 @@
           const dx = clientX - startX;
           const dy = clientY - startY;
           
+          velocity.x = clientX - lastX;
+          velocity.y = clientY - lastY;
+          lastX = clientX;
+          lastY = clientY;
+          
           const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
+          const rect = img.getBoundingClientRect();
+          const maxOffset = (scale - 1) * rect.width / 2;
           
-          // Calculer les limites de déplacement
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
-          const imgWidth = img.naturalWidth * scale;
-          const imgHeight = img.naturalHeight * scale;
-          
-          const maxX = Math.max(0, (imgWidth - viewportWidth) / 2);
-          const maxY = Math.max(0, (imgHeight - viewportHeight) / 2);
-          
-          // Limiter le déplacement
-          const newX = Math.min(Math.max(currentX + dx, -maxX), maxX);
-          const newY = Math.min(Math.max(currentY + dy, -maxY), maxY);
-          
-          img.dataset.translateX = newX;
-          img.dataset.translateY = newY;
+          img.dataset.translateX = Math.min(Math.max(currentX + dx, -maxOffset), maxOffset);
+          img.dataset.translateY = Math.min(Math.max(currentY + dy, -maxOffset), maxOffset);
           
           updateImageTransform(img, scale);
         }
@@ -1002,24 +981,45 @@
         function handleDragEnd() {
           if (!isDragging) return;
           isDragging = false;
-          img.style.cursor = 'grab';
+          img.classList.remove('panning');
+          
+          // Ajout d'inertie
+          const decay = 0.95;
+          const animate = () => {
+            if (Math.abs(velocity.x) < 0.1 && Math.abs(velocity.y) < 0.1) return;
+            
+            const scale = parseFloat(img.style.transform?.match(/scale\((.*?)\)/) ? img.style.transform.match(/scale\((.*?)\)/)[1] : 1);
+            const rect = img.getBoundingClientRect();
+            const maxOffset = (scale - 1) * rect.width / 2;
+            
+            const currentX = parseFloat(img.dataset.translateX || 0);
+            const currentY = parseFloat(img.dataset.translateY || 0);
+            
+            img.dataset.translateX = Math.min(Math.max(currentX + velocity.x, -maxOffset), maxOffset);
+            img.dataset.translateY = Math.min(Math.max(currentY + velocity.y, -maxOffset), maxOffset);
+            
+            velocity.x *= decay;
+            velocity.y *= decay;
+            
+            updateImageTransform(img, scale);
+            animationFrame = requestAnimationFrame(animate);
+          };
+          animate();
         }
 
-        // Mouse events
         img.addEventListener('mousedown', handleDragStart);
         document.addEventListener('mousemove', handleDragMove);
         document.addEventListener('mouseup', handleDragEnd);
-
-        // Touch events
-        img.addEventListener('touchstart', handleDragStart);
-        document.addEventListener('touchmove', handleDragMove);
+        
+        img.addEventListener('touchstart', handleDragStart, { passive: false });
+        document.addEventListener('touchmove', handleDragMove, { passive: false });
         document.addEventListener('touchend', handleDragEnd);
       }
 
-      // Ajout des écouteurs d'événements pour le zoom et le déplacement
+      // Initialisation des événements de zoom et de déplacement
       [leftImage, rightImage].forEach(img => {
-        img.parentElement.addEventListener('wheel', (e) => handleWheel(e, img));
-        img.addEventListener('dblclick', (e) => handleImageDoubleClick(e, img));
+        img.parentElement.addEventListener('wheel', (e) => handleWheelZoom(e, img));
+        img.addEventListener('dblclick', (e) => handleDoubleClickZoom(e, img));
         initDragAndDrop(img);
       });
 
@@ -1062,3 +1062,4 @@
     </script>
   </body>
 </html>
+
